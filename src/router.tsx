@@ -6,9 +6,9 @@ import RegisterPage from '@/pages/auth/RegisterPage'
 import ResetPasswordPage from '@/pages/auth/ResetPasswordPage'
 import AnalyticsPage from '@/pages/app/AnalyticsPage'
 import BadgesPage from '@/pages/app/BadgesPage'
-import RoadmapPage from '@/pages/app/RoadmapPage'
 import SettingsPage from '@/pages/app/SettingsPage'
-import TopicPage from '@/pages/app/TopicPage'
+import RoadmapPage from '@/pages/RoadmapPage'
+import TopicDetailPage from '@/pages/TopicDetailPage'
 import useAuthStore from '@/store/useAuthStore'
 
 function ProtectedRoute() {
@@ -66,7 +66,7 @@ export const router = createBrowserRouter([
       },
       {
         path: '/topics/:slug',
-        element: <TopicPage />,
+        element: <TopicDetailPage />,
       },
       {
         path: '/settings',

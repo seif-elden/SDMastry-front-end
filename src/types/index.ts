@@ -12,7 +12,29 @@ export interface Topic {
   slug: string
   title: string
   description: string
-  difficulty: 'beginner' | 'intermediate' | 'advanced'
+  category: string
+  level: 'beginner' | 'intermediate' | 'advanced'
+  group: 'core' | 'advanced'
+}
+
+export interface TopicWithProgress extends Topic {
+  best_score: number | null
+  attempts_count: number
+  passed: boolean
+  passed_at: string | null
+}
+
+export interface TopicAttemptSummary {
+  id: number
+  score: number
+  passed: boolean
+  created_at: string
+}
+
+export interface TopicDetail extends TopicWithProgress {
+  key_points: string[]
+  hook_question: string
+  attempts: TopicAttemptSummary[]
 }
 
 export interface TopicAttempt {
