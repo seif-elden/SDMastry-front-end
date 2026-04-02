@@ -142,9 +142,9 @@ await waitFor(() => expect(screen.getByRole('button', { name: /submit/i })).toBe
 ## Current Phase
 
 Update this line when starting a phase:
-**Active phase:** Not started — update when beginning
+**Active phase:** FE-1 Foundation
 
-**Branch:** (update when starting)
+**Branch:** phase/fe-1-foundation
 
 ---
 
