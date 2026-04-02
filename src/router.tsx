@@ -7,8 +7,8 @@ import ResetPasswordPage from '@/pages/auth/ResetPasswordPage'
 import AnalyticsPage from '@/pages/app/AnalyticsPage'
 import BadgesPage from '@/pages/app/BadgesPage'
 import SettingsPage from '@/pages/app/SettingsPage'
-import RoadmapPage from '@/pages/RoadmapPage'
-import TopicDetailPage from '@/pages/TopicDetailPage'
+import RoadmapPage from './pages/RoadmapPage'
+import TopicDetailPage from './pages/TopicDetailPage'
 import useAuthStore from '@/store/useAuthStore'
 
 function ProtectedRoute() {
