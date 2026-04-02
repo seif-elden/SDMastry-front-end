@@ -31,6 +31,30 @@ export interface TopicAttemptSummary {
   created_at: string
 }
 
+export interface AttemptEvaluation {
+  strengths: string[]
+  weaknesses: string[]
+  concepts_to_study: string[]
+  model_answer: string
+  sources: string[]
+  next_topic?: {
+    slug: string
+    title: string
+  } | null
+}
+
+export interface SubmitAttemptResponse {
+  attempt_id: number
+  status: 'pending' | 'processing' | 'complete' | 'failed'
+}
+
+export interface AttemptStatusResponse {
+  attempt_id: number
+  status: 'pending' | 'processing' | 'complete' | 'failed'
+  score: number | null
+  passed: boolean | null
+}
+
 export interface TopicDetail extends TopicWithProgress {
   key_points: string[]
   hook_question: string
@@ -41,10 +65,15 @@ export interface TopicAttempt {
   id: number
   topic_id: number
   user_id: number
+  topic_slug: string
   answer: string
-  score: number
-  feedback: string
+  score: number | null
+  passed: boolean | null
+  status: 'pending' | 'processing' | 'complete' | 'failed'
+  feedback: string | null
+  evaluation: AttemptEvaluation | null
   created_at: string
+  updated_at: string
 }
 
 export interface ChatMessage {

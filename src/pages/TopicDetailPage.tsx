@@ -1,15 +1,26 @@
 import { useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useNavigate, useParams } from 'react-router-dom'
+import { attemptsApi } from '@/api/attempts.api'
+import AnswerForm from '@/components/attempt/AnswerForm'
+import AttemptHistory from '@/components/attempt/AttemptHistory'
+import EvaluationPending from '@/components/attempt/EvaluationPending'
+import EvaluationResult from '@/components/attempt/EvaluationResult'
 import { topicsApi } from '@/api/topics.api'
 import useAuthStore from '@/store/useAuthStore'
+import type { AttemptStatusResponse, TopicAttempt } from '@/types'
+
+type AttemptViewState = 'idle' | 'form' | 'pending' | 'result'
 
 export default function TopicDetailPage() {
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const { slug = '' } = useParams()
   const user = useAuthStore((state) => state.user)
   const isVerified = Boolean(user?.email_verified_at)
-  const [showAnswerForm, setShowAnswerForm] = useState(false)
+  const [viewState, setViewState] = useState<AttemptViewState>('idle')
+  const [activeAttemptId, setActiveAttemptId] = useState<number | null>(null)
+  const [activeAttempt, setActiveAttempt] = useState<TopicAttempt | null>(null)
 
   const { data: topic, isLoading, isError } = useQuery({
     queryKey: ['topic', slug],
@@ -31,6 +42,18 @@ export default function TopicDetailPage() {
       </section>
     )
   }
+
+  const handleEvaluationComplete = async (status: AttemptStatusResponse) => {
+    setActiveAttemptId(status.attempt_id)
+    const attempt = await queryClient.fetchQuery({
+      queryKey: ['attempt', status.attempt_id],
+      queryFn: () => attemptsApi.getAttempt(status.attempt_id),
+    })
+    setActiveAttempt(attempt)
+    setViewState('result')
+  }
+
+  const hasAttempts = topic.attempts.length > 0
 
   return (
     <section className="space-y-6">
@@ -73,58 +96,56 @@ export default function TopicDetailPage() {
         ) : null}
 
         <div className={!isVerified ? 'opacity-40' : undefined}>
-          {topic.attempts.length === 0 ? (
+          {isVerified && viewState === 'idle' && !hasAttempts ? (
             <button
               type="button"
               className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500"
-              onClick={() => setShowAnswerForm(true)}
-              disabled={!isVerified}
+              onClick={() => setViewState('form')}
             >
               Take the Challenge
             </button>
-          ) : (
-            <div className="space-y-3">
-              <h3 className="text-base font-semibold text-zinc-100">Past Attempts</h3>
-              {topic.attempts.map((attempt) => (
-                <div key={attempt.id} className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-zinc-800 bg-zinc-950/60 px-3 py-2 text-sm">
-                  <div className="space-x-3 text-zinc-300">
-                    <span>Score: {attempt.score}/100</span>
-                    <span>{attempt.passed ? 'Passed' : 'Needs improvement'}</span>
-                    <span>{new Date(attempt.created_at).toLocaleDateString()}</span>
-                  </div>
-                  <Link className="text-indigo-300 hover:text-indigo-200" to={`/topics/${slug}?attempt=${attempt.id}`}>
-                    View
-                  </Link>
-                </div>
-              ))}
+          ) : null}
+
+          {viewState === 'idle' && hasAttempts ? <AttemptHistory topicSlug={slug} attempts={topic.attempts} /> : null}
+
+          {viewState === 'form' && isVerified ? (
+            <div className="transform-gpu transition-all duration-300 ease-out">
+              <AnswerForm
+                topicSlug={slug}
+                hookQuestion={topic.hook_question}
+                onSubmitted={(response) => {
+                  setActiveAttemptId(response.attempt_id)
+                  setViewState('pending')
+                }}
+              />
             </div>
-          )}
+          ) : null}
+
+          {viewState === 'pending' && activeAttemptId !== null ? (
+            <EvaluationPending
+              attemptId={activeAttemptId}
+              onComplete={(status) => {
+                void handleEvaluationComplete(status)
+              }}
+              onTryAgain={() => {
+                setViewState('form')
+              }}
+            />
+          ) : null}
+
+          {viewState === 'result' && activeAttempt ? <EvaluationResult attempt={activeAttempt} topicSlug={slug} /> : null}
 
           {isVerified ? (
             <button
               type="button"
               className="mt-4 rounded-lg border border-zinc-700 px-4 py-2 text-sm font-medium text-zinc-200 hover:border-indigo-400 hover:text-indigo-200"
-              onClick={() => setShowAnswerForm(true)}
+              onClick={() => {
+                setActiveAttempt(null)
+                setViewState('form')
+              }}
             >
               Start New Attempt
             </button>
-          ) : null}
-
-          {showAnswerForm && isVerified ? (
-            <form className="mt-4 space-y-3 rounded-lg border border-zinc-800 bg-zinc-950/80 p-4">
-              <label className="block text-sm text-zinc-200" htmlFor="answer">
-                Your answer
-                <textarea
-                  id="answer"
-                  rows={6}
-                  className="mt-2 w-full rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 text-zinc-100 focus:border-indigo-500 focus:outline-none"
-                  placeholder="Explain your approach here..."
-                />
-              </label>
-              <button type="submit" className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500">
-                Submit answer
-              </button>
-            </form>
           ) : null}
         </div>
       </section>

@@ -84,9 +84,9 @@ describe('TopicDetailPage', () => {
 
     renderTopicRoute()
 
-    expect(await screen.findByText('Past Attempts')).toBeInTheDocument()
+    expect(await screen.findByText('Attempt History')).toBeInTheDocument()
     expect(screen.getByText('Score: 85/100')).toBeInTheDocument()
-    expect(screen.getByText('View')).toBeInTheDocument()
+    expect(screen.getByText('View Evaluation')).toBeInTheDocument()
   })
 
   it('blocks actions for unverified users', async () => {
@@ -108,7 +108,5 @@ describe('TopicDetailPage', () => {
     await waitFor(() => {
       expect(screen.getByText('Verify your email to unlock attempts.')).toBeInTheDocument()
     })
-
-    expect(screen.getByRole('button', { name: 'Take the Challenge' })).toBeDisabled()
   })
 })

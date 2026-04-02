@@ -7,6 +7,7 @@ import ResetPasswordPage from '@/pages/auth/ResetPasswordPage'
 import AnalyticsPage from '@/pages/app/AnalyticsPage'
 import BadgesPage from '@/pages/app/BadgesPage'
 import SettingsPage from '@/pages/app/SettingsPage'
+import AttemptPage from './pages/AttemptPage.tsx'
 import RoadmapPage from './pages/RoadmapPage'
 import TopicDetailPage from './pages/TopicDetailPage'
 import useAuthStore from '@/store/useAuthStore'
@@ -67,6 +68,10 @@ export const router = createBrowserRouter([
       {
         path: '/topics/:slug',
         element: <TopicDetailPage />,
+      },
+      {
+        path: '/topics/:slug/attempts/:attemptId',
+        element: <AttemptPage />,
       },
       {
         path: '/settings',

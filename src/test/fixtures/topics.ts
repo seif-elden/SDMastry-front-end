@@ -1,4 +1,4 @@
-import type { TopicDetail, TopicWithProgress } from '@/types'
+import type { TopicAttempt, TopicDetail, TopicWithProgress } from '@/types'
 
 export const topicFixtures: TopicWithProgress[] = [
   {
@@ -62,3 +62,43 @@ export const topicDetailNoAttemptsFixture: TopicDetail = {
   hook_question: 'How would you route traffic across three regions with different failure rates?',
   attempts: [],
 }
+
+export const attemptFixture: TopicAttempt = {
+  id: 99,
+  topic_id: 1,
+  user_id: 1,
+  topic_slug: 'http-caching-basics',
+  answer: 'An answer about caching and validation headers.',
+  score: 85,
+  passed: true,
+  status: 'complete',
+  feedback: 'Great structure and examples.',
+  evaluation: {
+    strengths: ['Clear explanation of cache revalidation', 'Good trade-off analysis'],
+    weaknesses: ['Could explain stale-while-revalidate deeper'],
+    concepts_to_study: ['Cache invalidation', 'CDN cache hierarchy'],
+    model_answer: 'A strong caching strategy blends max-age, validation tokens, and invalidation policies.',
+    sources: ['Designing Data-Intensive Applications', 'High Performance Browser Networking'],
+    next_topic: {
+      slug: 'database-indexing',
+      title: 'Database Indexing',
+    },
+  },
+  created_at: '2026-04-02T10:00:00Z',
+  updated_at: '2026-04-02T10:01:00Z',
+}
+
+export const attemptsHistoryFixture = [
+  {
+    id: 99,
+    score: 85,
+    passed: true,
+    created_at: '2026-04-02T10:00:00Z',
+  },
+  {
+    id: 100,
+    score: 58,
+    passed: false,
+    created_at: '2026-04-01T09:30:00Z',
+  },
+]
