@@ -83,6 +83,15 @@ export interface ChatMessage {
   created_at: string
 }
 
+export interface ChatSessionResponse {
+  session_id: number
+  messages: ChatMessage[]
+}
+
+export interface SendMessageResponse {
+  message: ChatMessage
+}
+
 export interface ChatSession {
   id: number
   topic_id: number

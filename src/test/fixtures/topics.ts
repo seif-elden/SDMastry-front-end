@@ -1,4 +1,4 @@
-import type { TopicAttempt, TopicDetail, TopicWithProgress } from '@/types'
+import type { ChatMessage, TopicAttempt, TopicDetail, TopicWithProgress } from '@/types'
 
 export const topicFixtures: TopicWithProgress[] = [
   {
@@ -100,5 +100,35 @@ export const attemptsHistoryFixture = [
     score: 58,
     passed: false,
     created_at: '2026-04-01T09:30:00Z',
+  },
+]
+
+export const attemptFixtureTwo: TopicAttempt = {
+  ...attemptFixture,
+  id: 100,
+  score: 64,
+  passed: false,
+  created_at: '2026-04-01T09:30:00Z',
+  updated_at: '2026-04-01T09:31:00Z',
+}
+
+export const chatMessagesFixture: ChatMessage[] = [
+  {
+    id: 1,
+    role: 'assistant',
+    content: 'Model answer seed message',
+    created_at: '2026-04-02T10:05:00Z',
+  },
+  {
+    id: 2,
+    role: 'user',
+    content: 'Can you explain cache revalidation?',
+    created_at: '2026-04-02T10:06:00Z',
+  },
+  {
+    id: 3,
+    role: 'assistant',
+    content: 'Sure. Use ETag and If-None-Match to avoid sending full payloads.',
+    created_at: '2026-04-02T10:06:10Z',
   },
 ]

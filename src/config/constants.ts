@@ -15,3 +15,6 @@ export const ATTEMPT_STATUS_MESSAGES = [
 	'Synthesizing evaluation...',
 	'Almost there...',
 ]
+export const CHAT_MESSAGE_MAX_CHARS = 2000
+export const CHAT_COUNTER_VISIBLE_AT = 1500
+export const CHAT_CONTEXT_GUARD_PHRASE = "I'm here to help you master"
