@@ -14,7 +14,7 @@ export interface Topic {
   description: string
   category: string
   level: 'beginner' | 'intermediate' | 'advanced'
-  group: 'core' | 'advanced'
+  section: 'core' | 'advanced'
 }
 
 export interface TopicWithProgress extends Topic {
@@ -25,15 +25,19 @@ export interface TopicWithProgress extends Topic {
 }
 
 export interface TopicAttemptSummary {
-  id: number
-  score: number
-  passed: boolean
+  id?: number
+  attempt_id?: number
+  score: number | null
+  passed?: boolean
+  status?: 'pending' | 'processing' | 'complete' | 'failed'
   created_at: string
 }
 
 export interface AttemptEvaluation {
   strengths: string[]
   weaknesses: string[]
+  key_strengths?: string[]
+  key_weaknesses?: string[]
   concepts_to_study: string[]
   model_answer: string
   sources: string[]

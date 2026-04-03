@@ -40,7 +40,7 @@ export const authApi = {
   },
 
   resendVerification: async (): Promise<void> => {
-    await client.post('/auth/email/verification-notification')
+    await client.post('/auth/email/resend')
   },
 
   forgotPassword: async (email: string): Promise<void> => {

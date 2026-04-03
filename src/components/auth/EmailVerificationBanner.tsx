@@ -4,10 +4,34 @@ import { authApi } from '@/api/auth.api'
 import { VERIFICATION_RESEND_COOLDOWN_SECONDS } from '@/config/constants'
 import useAuthStore from '@/store/useAuthStore'
 
+const POLL_INTERVAL_MS = 10_000
+
 export default function EmailVerificationBanner() {
   const user = useAuthStore((state) => state.user)
+  const setAuth = useAuthStore((state) => state.setAuth)
+  const token = useAuthStore((state) => state.token)
   const [cooldown, setCooldown] = useState(0)
   const [isSent, setIsSent] = useState(false)
+
+  // Poll /auth/me to detect verification done in another tab
+  useEffect(() => {
+    if (!user || user.email_verified_at || !token) {
+      return
+    }
+
+    const intervalId = window.setInterval(async () => {
+      try {
+        const freshUser = await authApi.me()
+        if (freshUser.email_verified_at) {
+          setAuth(freshUser, token)
+        }
+      } catch {
+        // ignore — user will just see the banner until next poll
+      }
+    }, POLL_INTERVAL_MS)
+
+    return () => window.clearInterval(intervalId)
+  }, [user, token, setAuth])
 
   const resendMutation = useMutation({
     mutationFn: authApi.resendVerification,

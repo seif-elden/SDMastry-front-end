@@ -1,12 +1,14 @@
 import { useQuery } from '@tanstack/react-query'
 import { useEffect, useMemo, useState } from 'react'
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
+import { authApi } from '@/api/auth.api'
 import { analyticsApi } from '../api/analytics.api'
 import { settingsApi } from '@/api/settings.api'
 import StreakWidget from '../components/streak/StreakWidget'
 import { ANALYTICS_QUERY_STALE_TIME_MS, BADGES_LAST_CHECK_STORAGE_KEY } from '@/config/constants'
 import { getAgentLabel } from '@/config/agents'
 import EmailVerificationBanner from '@/components/auth/EmailVerificationBanner'
+import useAuthStore from '@/store/useAuthStore'
 
 const navigationItems = [
   { label: 'Roadmap', to: '/roadmap' },
@@ -17,9 +19,18 @@ const navigationItems = [
 
 export default function AppLayout() {
   const location = useLocation()
+  const setUser = useAuthStore((state) => state.setUser)
+  const token = useAuthStore((state) => state.token)
+  const user = useAuthStore((state) => state.user)
   const [lastBadgeCheckTime, setLastBadgeCheckTime] = useState<string>(() => {
     return window.localStorage.getItem(BADGES_LAST_CHECK_STORAGE_KEY) ?? new Date(0).toISOString()
   })
+
+  // Keep user profile fresh on load (including email verification state).
+  useEffect(() => {
+    if (!token) return
+    authApi.me().then(setUser).catch(() => {})
+  }, [token, setUser])
 
   const { data } = useQuery({
     queryKey: ['agent-settings'],

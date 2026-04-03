@@ -3,6 +3,7 @@ import { MemoryRouter } from 'react-router-dom'
 import { render } from '@testing-library/react'
 import EvaluationResult from '@/components/attempt/EvaluationResult'
 import { attemptFixture } from '@/test/fixtures/topics'
+import type { TopicAttempt } from '@/types'
 
 describe('EvaluationResult', () => {
   it('shows score, strengths, and weaknesses', () => {
@@ -28,5 +29,27 @@ describe('EvaluationResult', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Show Model Answer' }))
     expect(screen.getByText(attemptFixture.evaluation?.model_answer ?? '')).toBeInTheDocument()
     expect(screen.getByText(/Sources:/)).toBeInTheDocument()
+  })
+
+  it('renders strengths and weaknesses from snake_case evaluation keys', () => {
+    const snakeCaseAttempt: TopicAttempt = {
+      ...attemptFixture,
+      evaluation: {
+        key_strengths: ['Clear explanation of cache validators'],
+        key_weaknesses: ['Missing discussion of cache invalidation strategy'],
+        concepts_to_study: ['Cache invalidation'],
+        model_answer: 'A model answer.',
+        sources: ['source-a'],
+      },
+    }
+
+    render(
+      <MemoryRouter>
+        <EvaluationResult attempt={snakeCaseAttempt} topicSlug="http-caching-basics" />
+      </MemoryRouter>,
+    )
+
+    expect(screen.getByText('Clear explanation of cache validators')).toBeInTheDocument()
+    expect(screen.getByText('Missing discussion of cache invalidation strategy')).toBeInTheDocument()
   })
 })

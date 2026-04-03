@@ -5,25 +5,26 @@ import { attemptsApi } from '@/api/attempts.api'
 import AnswerForm from '@/components/attempt/AnswerForm'
 import AttemptHistory from '@/components/attempt/AttemptHistory'
 import EvaluationPending from '@/components/attempt/EvaluationPending'
-import EvaluationResult from '@/components/attempt/EvaluationResult'
 import { topicsApi } from '@/api/topics.api'
 import useAuthStore from '@/store/useAuthStore'
-import type { AttemptStatusResponse, TopicAttempt } from '@/types'
+import type { AttemptStatusResponse, TopicAttemptSummary } from '@/types'
 
-type AttemptViewState = 'idle' | 'form' | 'pending' | 'result'
+type AttemptViewState = 'idle' | 'form' | 'pending'
 
 export default function TopicDetailPage() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const { slug = '' } = useParams()
+  const token = useAuthStore((state) => state.token)
   const user = useAuthStore((state) => state.user)
   const isVerified = Boolean(user?.email_verified_at)
   const [viewState, setViewState] = useState<AttemptViewState>('idle')
   const [activeAttemptId, setActiveAttemptId] = useState<number | null>(null)
-  const [activeAttempt, setActiveAttempt] = useState<TopicAttempt | null>(null)
+  const [historyExpandedAttemptId, setHistoryExpandedAttemptId] = useState<number | null>(null)
+  const [latestAttemptSummary, setLatestAttemptSummary] = useState<TopicAttemptSummary | null>(null)
 
   const { data: topic, isLoading, isError } = useQuery({
-    queryKey: ['topic', slug],
+    queryKey: ['topic', slug, Boolean(token)],
     queryFn: () => topicsApi.getTopic(slug),
     enabled: Boolean(slug),
   })
@@ -49,11 +50,43 @@ export default function TopicDetailPage() {
       queryKey: ['attempt', status.attempt_id],
       queryFn: () => attemptsApi.getAttempt(status.attempt_id),
     })
-    setActiveAttempt(attempt)
-    setViewState('result')
+
+    setLatestAttemptSummary({
+      id: attempt.id,
+      attempt_id: attempt.id,
+      score: attempt.score,
+      passed: attempt.passed ?? undefined,
+      status: attempt.status,
+      created_at: attempt.created_at,
+    })
+    setHistoryExpandedAttemptId(attempt.id)
+    setViewState('idle')
+
+    void queryClient.invalidateQueries({
+      queryKey: ['topic', slug, Boolean(token)],
+    })
   }
 
-  const hasAttempts = topic.attempts.length > 0
+  const hasMatchingLatestAttempt =
+    latestAttemptSummary !== null &&
+    topic.attempts.some((attempt) => {
+      if (typeof attempt.id === 'number' && attempt.id === latestAttemptSummary.id) {
+        return true
+      }
+
+      if (typeof attempt.attempt_id === 'number' && attempt.attempt_id === latestAttemptSummary.id) {
+        return true
+      }
+
+      return false
+    })
+
+  const attemptsForHistory =
+    latestAttemptSummary && !hasMatchingLatestAttempt
+      ? [latestAttemptSummary, ...topic.attempts]
+      : topic.attempts
+
+  const hasAttempts = attemptsForHistory.length > 0
 
   return (
     <section className="space-y-6">
@@ -77,9 +110,11 @@ export default function TopicDetailPage() {
       <section className="rounded-xl border border-zinc-800 bg-zinc-900/80 p-6">
         <h2 className="text-lg font-semibold text-zinc-100">Key Points</h2>
         <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-zinc-300">
-          {topic.key_points.map((point, index) => (
-            <li key={`${index}-${point}`}>{point}</li>
-          ))}
+          {Array.isArray(topic.key_points) ? (
+            topic.key_points.map((point, index) => (
+              <li key={`${index}-${point}`}>{point}</li>
+            ))
+          ) : null}
         </ul>
       </section>
 
@@ -96,17 +131,18 @@ export default function TopicDetailPage() {
         ) : null}
 
         <div className={!isVerified ? 'opacity-40' : undefined}>
-          {isVerified && viewState === 'idle' && !hasAttempts ? (
+          {isVerified ? (
             <button
               type="button"
               className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500"
-              onClick={() => setViewState('form')}
+              onClick={() => {
+                setHistoryExpandedAttemptId(null)
+                setViewState('form')
+              }}
             >
-              Take the Challenge
+              {hasAttempts ? 'Start New Attempt' : 'Take the Challenge'}
             </button>
           ) : null}
-
-          {viewState === 'idle' && hasAttempts ? <AttemptHistory topicSlug={slug} attempts={topic.attempts} /> : null}
 
           {viewState === 'form' && isVerified ? (
             <div className="transform-gpu transition-all duration-300 ease-out">
@@ -115,6 +151,7 @@ export default function TopicDetailPage() {
                 hookQuestion={topic.hook_question}
                 onSubmitted={(response) => {
                   setActiveAttemptId(response.attempt_id)
+                  setHistoryExpandedAttemptId(null)
                   setViewState('pending')
                 }}
               />
@@ -133,19 +170,15 @@ export default function TopicDetailPage() {
             />
           ) : null}
 
-          {viewState === 'result' && activeAttempt ? <EvaluationResult attempt={activeAttempt} topicSlug={slug} /> : null}
-
-          {isVerified ? (
-            <button
-              type="button"
-              className="mt-4 rounded-lg border border-zinc-700 px-4 py-2 text-sm font-medium text-zinc-200 hover:border-indigo-400 hover:text-indigo-200"
-              onClick={() => {
-                setActiveAttempt(null)
-                setViewState('form')
-              }}
-            >
-              Start New Attempt
-            </button>
+          {hasAttempts ? (
+            <div className="mt-4">
+              <AttemptHistory
+                topicSlug={slug}
+                attempts={attemptsForHistory}
+                expandedAttemptId={historyExpandedAttemptId}
+                onExpandedAttemptIdChange={setHistoryExpandedAttemptId}
+              />
+            </div>
           ) : null}
         </div>
       </section>

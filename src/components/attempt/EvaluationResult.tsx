@@ -37,8 +37,16 @@ export default function EvaluationResult({ attempt, topicSlug }: EvaluationResul
   }, [score])
 
   const evaluation = attempt.evaluation
-  const strengths = evaluation?.strengths ?? []
-  const weaknesses = evaluation?.weaknesses ?? []
+  const strengths = Array.isArray(evaluation?.strengths)
+    ? evaluation.strengths
+    : Array.isArray(evaluation?.key_strengths)
+      ? evaluation.key_strengths
+      : []
+  const weaknesses = Array.isArray(evaluation?.weaknesses)
+    ? evaluation.weaknesses
+    : Array.isArray(evaluation?.key_weaknesses)
+      ? evaluation.key_weaknesses
+      : []
   const concepts = evaluation?.concepts_to_study ?? []
   const modelAnswer = evaluation?.model_answer ?? 'No model answer available yet.'
   const sources = evaluation?.sources ?? []

@@ -27,8 +27,8 @@ export default function RoadmapPage() {
   const user = useAuthStore((state) => state.user)
   const isVerified = Boolean(user?.email_verified_at)
 
-  const coreTopics = topics.filter((topic) => topic.group === 'core')
-  const advancedTopics = topics.filter((topic) => topic.group === 'advanced')
+  const coreTopics = topics.filter((topic) => topic.section === 'core')
+  const advancedTopics = topics.filter((topic) => topic.section === 'advanced')
 
   const coreMastered = coreTopics.filter((topic) => topic.passed).length
   const advancedMastered = advancedTopics.filter((topic) => topic.passed).length

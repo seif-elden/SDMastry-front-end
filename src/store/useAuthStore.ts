@@ -24,7 +24,7 @@ const useAuthStore = create<AuthState>()(
     {
       name: 'sdm-auth',
       storage: createJSONStorage(() => localStorage),
-      partialize: (state) => ({ token: state.token }),
+      partialize: (state) => ({ token: state.token, user: state.user }),
     },
   ),
 )

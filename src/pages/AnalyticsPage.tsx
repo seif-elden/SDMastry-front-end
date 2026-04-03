@@ -130,7 +130,7 @@ export default function AnalyticsPage() {
     return <div className="h-64 animate-pulse rounded-2xl bg-zinc-800/60" />
   }
 
-  if (isError || !data) {
+  if (isError || !data || !data.overview) {
     return (
       <section className="rounded-xl border border-red-600/40 bg-red-500/10 p-6 text-red-100">
         Failed to load analytics.

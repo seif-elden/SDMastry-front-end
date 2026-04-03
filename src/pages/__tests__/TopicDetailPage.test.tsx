@@ -86,7 +86,7 @@ describe('TopicDetailPage', () => {
 
     expect(await screen.findByText('Attempt History')).toBeInTheDocument()
     expect(screen.getByText('Score: 85/100')).toBeInTheDocument()
-    expect(screen.getByText('View Evaluation')).toBeInTheDocument()
+    expect(screen.getByText('Show Details')).toBeInTheDocument()
   })
 
   it('blocks actions for unverified users', async () => {
