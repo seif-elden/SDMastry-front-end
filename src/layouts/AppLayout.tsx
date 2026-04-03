@@ -1,6 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
-import { Link, NavLink, Outlet } from 'react-router-dom'
+import { useEffect, useMemo, useState } from 'react'
+import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
+import { analyticsApi } from '../api/analytics.api'
 import { settingsApi } from '@/api/settings.api'
+import StreakWidget from '../components/streak/StreakWidget'
+import { ANALYTICS_QUERY_STALE_TIME_MS, BADGES_LAST_CHECK_STORAGE_KEY } from '@/config/constants'
 import { getAgentLabel } from '@/config/agents'
 import EmailVerificationBanner from '@/components/auth/EmailVerificationBanner'
 
@@ -12,10 +16,50 @@ const navigationItems = [
 ]
 
 export default function AppLayout() {
+  const location = useLocation()
+  const [lastBadgeCheckTime, setLastBadgeCheckTime] = useState<string>(() => {
+    return window.localStorage.getItem(BADGES_LAST_CHECK_STORAGE_KEY) ?? new Date(0).toISOString()
+  })
+
   const { data } = useQuery({
     queryKey: ['agent-settings'],
     queryFn: settingsApi.getAgentSettings,
   })
+
+  const { data: analyticsData } = useQuery({
+    queryKey: ['analytics'],
+    queryFn: analyticsApi.getAnalytics,
+    staleTime: ANALYTICS_QUERY_STALE_TIME_MS,
+  })
+
+  const { data: badgesData } = useQuery({
+    queryKey: ['badges'],
+    queryFn: analyticsApi.getBadges,
+  })
+
+  useEffect(() => {
+    if (location.pathname !== '/badges') {
+      return
+    }
+
+    const nowIso = new Date().toISOString()
+    window.localStorage.setItem(BADGES_LAST_CHECK_STORAGE_KEY, nowIso)
+    setLastBadgeCheckTime(nowIso)
+  }, [location.pathname])
+
+  const newBadgeCount = useMemo(() => {
+    if (!badgesData?.badges?.length) {
+      return 0
+    }
+
+    return badgesData.badges.filter((badge) => {
+      if (!badge.earned || !badge.earned_at) {
+        return false
+      }
+
+      return new Date(badge.earned_at).getTime() > new Date(lastBadgeCheckTime).getTime()
+    }).length
+  }, [badgesData, lastBadgeCheckTime])
 
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100 md:grid md:grid-cols-[220px_1fr]">
@@ -39,10 +83,23 @@ export default function AppLayout() {
                   }`
                 }
               >
-                {item.label}
+                <span className="inline-flex items-center gap-2">
+                  {item.label}
+                  {item.to === '/badges' && newBadgeCount > 0 ? (
+                    <span className="rounded-full bg-indigo-500 px-2 py-0.5 text-xs font-semibold text-white">
+                      {newBadgeCount}
+                    </span>
+                  ) : null}
+                </span>
               </NavLink>
             ))}
           </nav>
+          <div className="mt-6">
+            <StreakWidget
+              currentStreak={analyticsData?.streak.current ?? 0}
+              last7Days={analyticsData?.streak.last_7_days ?? []}
+            />
+          </div>
         </div>
       </aside>
 

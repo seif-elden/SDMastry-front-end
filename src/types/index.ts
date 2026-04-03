@@ -121,6 +121,20 @@ export interface Badge {
   icon: string
 }
 
+export type BadgeGroup = 'progress' | 'scores' | 'streaks' | 'engagement' | 'speed'
+
+export interface UserBadgeStatus {
+  id: number
+  slug: string
+  name: string
+  description: string
+  icon: string
+  group: BadgeGroup
+  earned: boolean
+  earned_at: string | null
+  hint?: string | null
+}
+
 export interface UserBadge {
   id: number
   user_id: number
@@ -135,15 +149,49 @@ export interface Progress {
 }
 
 export interface AnalyticsData {
-  progress: Progress
-  attempts_count: number
-  average_score: number
-  streak: number
-  topic_breakdown: Array<{
-    topic_slug: string
-    score: number
-    attempts: number
+  overview: {
+    topics_mastered: number
+    total_topics: number
+    current_streak: number
+    longest_streak: number
+    average_score: number
+  }
+  category_heatmap: Array<{
+    category: string
+    completed_topics: number
+    total_topics: number
+    completion_percentage: number
   }>
+  score_timeline: Array<{
+    topic_slug: string
+    topic_title: string
+    attempted_at: string
+    score: number
+  }>
+  activity_calendar: Array<{
+    date: string
+    activity_count: number
+  }>
+  weak_areas: Array<{
+    topic_slug: string
+    topic_title: string
+    category: string
+    best_score: number
+    attempts_count: number
+  }>
+  time_spent: Array<{
+    topic_slug: string
+    topic_title: string
+    average_minutes: number
+  }>
+  streak: {
+    current: number
+    longest: number
+    last_7_days: Array<{
+      date: string
+      active: boolean
+    }>
+  }
 }
 
 export interface FieldErrors {

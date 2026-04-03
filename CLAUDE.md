@@ -142,9 +142,9 @@ await waitFor(() => expect(screen.getByRole('button', { name: /submit/i })).toBe
 ## Current Phase
 
 Update this line when starting a phase:
-**Active phase:** FE-5 Settings and Agent
+**Active phase:** FE-6 Analytics Dashboard and Badges
 
-**Branch:** phase/fe-5-settings-and-agent
+**Branch:** phase/fe-6-gamification-analytics
 
 ---
 
