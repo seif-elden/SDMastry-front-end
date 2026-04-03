@@ -1,73 +1,77 @@
-# React + TypeScript + Vite
+# SDMastry Front End
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+SDMastry Front End is the web client for the SDMastry learning platform. It helps learners work through backend and software engineering topics using guided attempts, AI chat support, progress tracking, analytics, and badges.
 
-Currently, two official plugins are available:
+## Purpose
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+This project provides a focused study experience where users can:
 
-## React Compiler
+- browse and follow a topic roadmap
+- submit answers and receive evaluations
+- continue learning through topic-specific AI chat
+- track learning streaks and progress
+- view analytics and unlock badges
+- manage preferred AI agents and account settings
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Tech Stack
 
-## Expanding the ESLint configuration
+- React 18
+- TypeScript
+- Vite
+- Tailwind CSS
+- TanStack Query
+- Zustand
+- Axios
+- React Router
+- Vitest + Testing Library
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Local Development
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+Requirements:
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+- Node.js 18+
+- npm
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Install and run:
+
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+The app runs at:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- http://localhost:5174
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Scripts
+
+```bash
+npm run dev        # start dev server
+npm run build      # production build
+npm run preview    # preview production build
+npm run test       # run tests
+npx tsc --noEmit   # type check
 ```
+
+## Backend API
+
+This frontend is configured to work with the SDMastry backend API at:
+
+- http://localhost:8000/api/v1
+
+## Project Structure
+
+Main folders:
+
+- src/pages: route-level pages
+- src/components: reusable UI and feature components
+- src/api: API modules and client configuration
+- src/hooks: custom data and behavior hooks
+- src/store: client state management
+- src/types: shared TypeScript types
+
+## Status
+
+Current active frontend phase in this repository:
+
+- FE-6 Analytics Dashboard and Badges
