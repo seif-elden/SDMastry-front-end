@@ -142,9 +142,9 @@ await waitFor(() => expect(screen.getByRole('button', { name: /submit/i })).toBe
 ## Current Phase
 
 Update this line when starting a phase:
-**Active phase:** FE-4 Chat Interface
+**Active phase:** FE-5 Settings and Agent
 
-**Branch:** phase/fe-4-chat-interface
+**Branch:** phase/fe-5-settings-and-agent
 
 ---
 

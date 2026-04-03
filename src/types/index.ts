@@ -92,6 +92,17 @@ export interface SendMessageResponse {
   message: ChatMessage
 }
 
+export interface ProviderKeyStatus {
+  provider: 'openai' | 'gemini' | 'grok'
+  is_set: boolean
+  last4?: string | null
+}
+
+export interface AgentSettingsResponse {
+  selected_agent: 'ollama' | 'openai' | 'gemini' | 'grok'
+  api_keys: ProviderKeyStatus[]
+}
+
 export interface ChatSession {
   id: number
   topic_id: number
