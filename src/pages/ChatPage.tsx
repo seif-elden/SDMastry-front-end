@@ -31,6 +31,7 @@ export default function ChatPage() {
     queryFn: () => attemptsApi.getTopicAttempts(slug),
     enabled: Boolean(slug),
   })
+  const safeAttempts = Array.isArray(attempts) ? attempts : []
 
   const { data: chatSession, isLoading } = useChatSession(Number.isFinite(selectedAttemptId) ? selectedAttemptId : null)
   const sendMessageMutation = useSendMessage(Number.isFinite(selectedAttemptId) ? selectedAttemptId : null, {
@@ -42,8 +43,8 @@ export default function ChatPage() {
   const topicTitle = topic?.title ?? slug
 
   const selectedAttempt = useMemo(
-    () => attempts.find((item) => item.id === selectedAttemptId),
-    [attempts, selectedAttemptId],
+    () => safeAttempts.find((item) => item.id === selectedAttemptId),
+    [safeAttempts, selectedAttemptId],
   )
 
   if (!Number.isFinite(initialAttemptId)) {
@@ -86,7 +87,7 @@ export default function ChatPage() {
 
       <div className="border-b border-zinc-800 px-4 py-3">
         <AttemptSelector
-          attempts={attempts}
+          attempts={safeAttempts}
           selectedAttemptId={selectedAttemptId}
           onSelectAttempt={(nextAttemptId) => {
             setSelectedAttemptId(nextAttemptId)

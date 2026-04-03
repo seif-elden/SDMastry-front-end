@@ -39,7 +39,7 @@ export interface AttemptEvaluation {
   key_strengths?: string[]
   key_weaknesses?: string[]
   concepts_to_study: string[]
-  model_answer: string
+  notes: string
   sources: string[]
   next_topic?: {
     slug: string

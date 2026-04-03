@@ -47,7 +47,7 @@ export default function MessageList({ messages, topicTitle }: MessageListProps) 
               }`}
             >
               {!isUser ? <p className="mb-1 text-xs text-zinc-400">🤖 Assistant</p> : null}
-              {isSeedModelAnswer ? <p className="mb-1 text-xs font-semibold text-indigo-200">📚 Model Answer</p> : null}
+              {isSeedModelAnswer ? <p className="mb-1 text-xs font-semibold text-indigo-200">📚 Notes</p> : null}
               {isContextGuard ? <p className="mb-1 text-xs font-semibold text-amber-200">⚠️ Off-topic guard</p> : null}
 
               {isTyping ? (

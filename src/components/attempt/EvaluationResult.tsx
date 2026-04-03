@@ -9,7 +9,7 @@ interface EvaluationResultProps {
 
 export default function EvaluationResult({ attempt, topicSlug }: EvaluationResultProps) {
   const navigate = useNavigate()
-  const [showModelAnswer, setShowModelAnswer] = useState(false)
+  const [showNotes, setShowNotes] = useState(false)
 
   const score = attempt.score ?? 0
   const scoreTone = useMemo(() => {
@@ -48,7 +48,7 @@ export default function EvaluationResult({ attempt, topicSlug }: EvaluationResul
       ? evaluation.key_weaknesses
       : []
   const concepts = evaluation?.concepts_to_study ?? []
-  const modelAnswer = evaluation?.model_answer ?? 'No model answer available yet.'
+  const notes = evaluation?.notes ?? 'No notes available yet.'
   const sources = evaluation?.sources ?? []
 
   return (
@@ -93,15 +93,15 @@ export default function EvaluationResult({ attempt, topicSlug }: EvaluationResul
       <div className="rounded-xl border border-zinc-800 bg-zinc-950/70 p-4">
         <button
           type="button"
-          onClick={() => setShowModelAnswer((value) => !value)}
+          onClick={() => setShowNotes((value) => !value)}
           className="text-sm font-medium text-indigo-300 hover:text-indigo-200"
         >
-          {showModelAnswer ? 'Hide Model Answer' : 'Show Model Answer'}
+          {showNotes ? 'Hide Notes' : 'Show Notes'}
         </button>
 
-        {showModelAnswer ? (
+        {showNotes ? (
           <div className="mt-3 space-y-3">
-            <p className="whitespace-pre-wrap text-sm leading-7 text-zinc-200">{modelAnswer}</p>
+            <p className="whitespace-pre-wrap text-sm leading-7 text-zinc-200">{notes}</p>
             {sources.length > 0 ? <p className="text-xs text-zinc-400">Sources: {sources.join(' · ')}</p> : null}
           </div>
         ) : null}

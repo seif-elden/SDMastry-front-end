@@ -71,7 +71,9 @@ export default function TopicCard({ topic, isVerified }: TopicCardProps) {
       <div className="mt-4 flex flex-wrap items-center gap-2 text-xs text-zinc-300">
         {isPassed ? <span className="rounded-full bg-emerald-500/20 px-2 py-1 text-emerald-200">Passed</span> : null}
         {isAttempted && topic.best_score !== null ? (
-          <span className="rounded-full bg-zinc-800 px-2 py-1 text-zinc-200">Best: {topic.best_score}/100</span>
+          <span className={`rounded-full px-2 py-1 ${isPassed ? 'bg-emerald-500/20 text-emerald-200' : 'bg-amber-500/20 text-amber-200'}`}>
+            Highest: {topic.best_score}/100
+          </span>
         ) : null}
         <span className="rounded-full bg-zinc-800 px-2 py-1">{topic.attempts_count} attempts</span>
       </div>

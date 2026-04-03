@@ -1,6 +1,6 @@
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect, useMemo, useState } from 'react'
-import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
+import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { authApi } from '@/api/auth.api'
 import { analyticsApi } from '../api/analytics.api'
 import { settingsApi } from '@/api/settings.api'
@@ -19,7 +19,10 @@ const navigationItems = [
 
 export default function AppLayout() {
   const location = useLocation()
+  const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const setUser = useAuthStore((state) => state.setUser)
+  const clearAuth = useAuthStore((state) => state.clearAuth)
   const token = useAuthStore((state) => state.token)
   const user = useAuthStore((state) => state.user)
   const [lastBadgeCheckTime, setLastBadgeCheckTime] = useState<string>(() => {
@@ -72,6 +75,15 @@ export default function AppLayout() {
     }).length
   }, [badgesData, lastBadgeCheckTime])
 
+  const logoutMutation = useMutation({
+    mutationFn: authApi.logout,
+    onSettled: () => {
+      clearAuth()
+      queryClient.clear()
+      navigate('/login', { replace: true })
+    },
+  })
+
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100 md:grid md:grid-cols-[220px_1fr]">
       <aside className="border-b border-zinc-800 bg-zinc-900 md:min-h-screen md:border-b-0 md:border-r">
@@ -111,6 +123,16 @@ export default function AppLayout() {
               last7Days={analyticsData?.streak.last_7_days ?? []}
             />
           </div>
+          <button
+            type="button"
+            onClick={() => {
+              void logoutMutation.mutateAsync()
+            }}
+            disabled={logoutMutation.isPending}
+            className="mt-6 w-full rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm font-medium text-zinc-200 transition hover:border-red-400/50 hover:text-red-200 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {logoutMutation.isPending ? 'Logging out...' : 'Logout'}
+          </button>
         </div>
       </aside>
 

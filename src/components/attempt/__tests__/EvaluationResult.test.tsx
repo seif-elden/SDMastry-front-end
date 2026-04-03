@@ -19,15 +19,15 @@ describe('EvaluationResult', () => {
     expect(screen.getByText('Passed ✓')).toBeInTheDocument()
   })
 
-  it('toggles model answer section', () => {
+  it('toggles notes section', () => {
     render(
       <MemoryRouter>
         <EvaluationResult attempt={attemptFixture} topicSlug="http-caching-basics" />
       </MemoryRouter>,
     )
 
-    fireEvent.click(screen.getByRole('button', { name: 'Show Model Answer' }))
-    expect(screen.getByText(attemptFixture.evaluation?.model_answer ?? '')).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Show Notes' }))
+    expect(screen.getByText(attemptFixture.evaluation?.notes ?? '')).toBeInTheDocument()
     expect(screen.getByText(/Sources:/)).toBeInTheDocument()
   })
 
@@ -38,7 +38,7 @@ describe('EvaluationResult', () => {
         key_strengths: ['Clear explanation of cache validators'],
         key_weaknesses: ['Missing discussion of cache invalidation strategy'],
         concepts_to_study: ['Cache invalidation'],
-        model_answer: 'A model answer.',
+        notes: 'Notes content.',
         sources: ['source-a'],
       },
     }

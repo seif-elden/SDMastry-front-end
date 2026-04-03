@@ -25,7 +25,7 @@ describe('TopicCard', () => {
     )
 
     expect(screen.getByText('Passed')).toBeInTheDocument()
-    expect(screen.getByText('Best: 85/100')).toBeInTheDocument()
+    expect(screen.getByText('Highest: 85/100')).toBeInTheDocument()
     expect(screen.getByText('Review')).toBeInTheDocument()
   })
 
@@ -36,7 +36,7 @@ describe('TopicCard', () => {
       </MemoryRouter>,
     )
 
-    expect(screen.getByText('Best: 64/100')).toBeInTheDocument()
+    expect(screen.getByText('Highest: 64/100')).toBeInTheDocument()
     expect(screen.getByText('Retry')).toBeInTheDocument()
     expect(screen.queryByText('Passed')).not.toBeInTheDocument()
   })

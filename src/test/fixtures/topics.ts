@@ -77,7 +77,7 @@ export const attemptFixture: TopicAttempt = {
     strengths: ['Clear explanation of cache revalidation', 'Good trade-off analysis'],
     weaknesses: ['Could explain stale-while-revalidate deeper'],
     concepts_to_study: ['Cache invalidation', 'CDN cache hierarchy'],
-    model_answer: 'A strong caching strategy blends max-age, validation tokens, and invalidation policies.',
+    notes: 'A strong caching strategy blends max-age, validation tokens, and invalidation policies.',
     sources: ['Designing Data-Intensive Applications', 'High Performance Browser Networking'],
     next_topic: {
       slug: 'database-indexing',
@@ -116,7 +116,7 @@ export const chatMessagesFixture: ChatMessage[] = [
   {
     id: 1,
     role: 'assistant',
-    content: 'Model answer seed message',
+    content: 'Notes seed message',
     created_at: '2026-04-02T10:05:00Z',
   },
   {
